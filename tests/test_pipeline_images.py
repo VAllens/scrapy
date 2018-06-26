@@ -1,8 +1,8 @@
-import os
+import io
 import hashlib
 import random
 import warnings
-from tempfile import mkdtemp, TemporaryFile
+from tempfile import mkdtemp
 from shutil import rmtree
 
 from twisted.trial import unittest
@@ -403,12 +403,10 @@ class ImagesPipelineTestCaseCustomSettings(unittest.TestCase):
 
 
 def _create_image(format, *a, **kw):
-    with TemporaryFile() as buf:
-        Image.new(*a, **kw).save(buf, format)
-        buf.seek(0)
-        im = Image.open(buf)
-        im.load()
-    return im
+    buf = io.BytesIO()
+    Image.new(*a, **kw).save(buf, format)
+    buf.seek(0)
+    return Image.open(buf)
 
 
 if __name__ == "__main__":
