@@ -401,11 +401,14 @@ class ImagesPipelineTestCaseCustomSettings(unittest.TestCase):
             self.assertEqual(getattr(pipeline_cls, pipe_attr.lower()),
                              expected_value)
 
+
 def _create_image(format, *a, **kw):
-    buf = TemporaryFile()
-    Image.new(*a, **kw).save(buf, format)
-    buf.seek(0)
-    return Image.open(buf)
+    with TemporaryFile() as buf:
+        Image.new(*a, **kw).save(buf, format)
+        buf.seek(0)
+        im = Image.open(buf)
+        im.load()
+    return im
 
 
 if __name__ == "__main__":
